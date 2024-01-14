@@ -9,7 +9,6 @@ export class AuthService{
     static async signUp(body:UserRegistrationDto):Promise<any>{
         const myDataSource = AppSataSource
         // const newUser =await this.userRepository.create(body);
-        console.log(body);
         const dob = new Date();
         body.dob=dob;
         return await myDataSource.getRepository(Users).save(body)

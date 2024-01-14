@@ -1,7 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Blogs } from "./Blogs.entity";
+// import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs';
+
 
 @Entity()
+@Unique(['email'])
 export class Users{
     @PrimaryGeneratedColumn('uuid')
     id:string;
@@ -26,5 +30,12 @@ export class Users{
 
     @OneToMany(()=>Blogs,(blog)=>blog.user)
     blogs?:Blogs[];
+
+    @BeforeInsert()
+    async hashPassword():Promise<void> {
+        console.log('hiii')
+        const salt = await bcrypt.genSalt();
+        this.password = await bcrypt.hash(this.password,salt);
+    }
 
 }
