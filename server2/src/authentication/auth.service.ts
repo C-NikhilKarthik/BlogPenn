@@ -8,15 +8,29 @@ export class AuthService {
 
   static async signUp(body: UserRegistrationDto): Promise<any> {
     const myDataSource = AppSataSource;
-    // const newUser =await this.userRepository.create(body);
-    console.log(body);
-    const dob = new Date();
-    body.dob = dob;
-    return await myDataSource.getRepository(Users).save(body);
+    const userRepository = myDataSource.getRepository(Users);
+    const user = userRepository.create(body);
+    return await userRepository.save(user);
   }
 
-  static async logIn(body: UserRegistrationDto): Promise<any> {
+  static async signIn(body: UserRegistrationDto): Promise<any> {
     const myDataSource = AppSataSource;
-    console.log(body);
+    let User;
+    try {
+      const user = await myDataSource
+        .getRepository(Users)
+        .findOne({ where: { email: body.email } });
+
+      if (user) {
+        User = user;
+        console.log("User found:", user);
+      } else {
+        return "User not found";
+      }
+    } catch (error) {
+      return "Error: " + error;
+    }
+
+    return User;
   }
 }
