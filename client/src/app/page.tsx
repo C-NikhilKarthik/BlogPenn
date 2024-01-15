@@ -13,6 +13,7 @@ export default function Home() {
   const loggedIn = useSelector(
     (state: RootState) => state.authReducer.user.loggedIn
   );
+
   const loading = useSelector((state: RootState) => state.authReducer.loading);
   const dispatch = useDispatch<AppDispatch>();
 

@@ -3,11 +3,13 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { AuthService } from "./authentication/auth.service";
 import { UserRegistrationDto } from "./authentication/auth.dto";
+import cors from "cors";
 
 const app = express();
 const PORT = 5050;
 
 app.use(express.json());
+app.use(cors());
 
 export const AppSataSource = new DataSource({
   type: "postgres",
