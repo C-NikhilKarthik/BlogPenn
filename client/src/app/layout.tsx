@@ -27,6 +27,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,12 +37,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setOpen((open) => !open);
+      }
+
+      if (e.key === "d" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        router.push("/draft");
       }
     };
 
@@ -87,8 +93,8 @@ export default function RootLayout({
                   </CommandItem>
                   <CommandItem>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    <span>Billing</span>
-                    <CommandShortcut>⌘B</CommandShortcut>
+                    <span>Draft Blog</span>
+                    <CommandShortcut>⌘D</CommandShortcut>
                   </CommandItem>
                   <CommandItem>
                     <Settings className="mr-2 h-4 w-4" />

@@ -8,14 +8,12 @@ type InitialState = {
 type User = {
   token: string;
   loggedIn: boolean;
-  mdDevice: boolean;
 };
 
 const initialState = {
   user: {
     token: "",
     loggedIn: false,
-    mdDevice: false,
   } as User,
   loading: true,
 } as InitialState;
@@ -24,9 +22,6 @@ export const auth = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    toggleMdDevice: (state) => {
-      state.user.mdDevice = !state.user.mdDevice;
-    },
     logIn: (state) => {
       state.user.loggedIn = true;
     },
@@ -42,7 +37,6 @@ export const auth = createSlice({
   },
 });
 
-export const { toggleMdDevice, logIn, logOut, setToken, setLoading } =
-  auth.actions;
+export const { logIn, logOut, setToken, setLoading } = auth.actions;
 
 export default auth.reducer;
