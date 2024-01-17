@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type InitialState = {
   user: User;
+  loading: boolean;
 };
 
 type User = {
@@ -16,6 +17,7 @@ const initialState = {
     loggedIn: false,
     mdDevice: false,
   } as User,
+  loading: true,
 } as InitialState;
 
 export const auth = createSlice({
@@ -34,9 +36,13 @@ export const auth = createSlice({
     setToken: (state, action: PayloadAction<string>) => {
       state.user.token = action.payload;
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
   },
 });
 
-export const { toggleMdDevice, logIn, logOut, setToken } = auth.actions;
+export const { toggleMdDevice, logIn, logOut, setToken, setLoading } =
+  auth.actions;
 
 export default auth.reducer;

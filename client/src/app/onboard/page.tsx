@@ -45,7 +45,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5050/api/auth/login",
+        "http://localhost:5050/auth/login",
         Object.fromEntries(formData.entries()), // Convert FormData to plain JS object
         {
           headers: {
@@ -55,15 +55,20 @@ export default function Login() {
         }
       );
 
-      if (response.data) {
+      if (response.data.status === 200) {
         dispatch(setToken(response.data.token));
-        localStorage.setItem("user", response.data.token);
+        localStorage.setItem("user", response.data.data.token);
         dispatch(logIn());
         router.push("/");
 
         toast({
           title: "Success",
           description: "Login successful",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: response.data.data.message,
         });
       }
     } catch (err: AxiosError) {

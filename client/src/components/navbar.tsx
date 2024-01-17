@@ -1,8 +1,10 @@
 "use client";
 import * as React from "react";
+import { CalendarDays } from "lucide-react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import jwt from "jsonwebtoken";
 
 import { IoSearchOutline } from "react-icons/io5";
 import { TbHexagonLetterB } from "react-icons/tb";
@@ -13,24 +15,27 @@ import { NavigationMenuDemo } from "./navigation";
 
 import { Icons } from "@/components/icons";
 import { NavigationMenuLink } from "@/components/ui/navigation-menu";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+
 import { Button } from "./ui/button";
 
 import { logOut } from "@/lib/features/auth-slice";
 import { AppDispatch, RootState } from "@/lib/store";
 import { useSelector, useDispatch } from "react-redux";
 
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
 export default function Navbar() {
   const loggedIn = useSelector(
     (state: RootState) => state.authReducer.user.loggedIn
   );
+
+  const token = useSelector((state: RootState) => state.authReducer.user.token);
+
+  const Decoded = jwt.decode(token);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -55,15 +60,15 @@ export default function Navbar() {
         Re-usable components built using Radix UI and Tailwind CSS.
       </ListItem>
       {!loggedIn && (
-        <DrawerTrigger asChild>
-          <Button variant="outline">Open Drawer</Button>
-        </DrawerTrigger>
+        <Link href="/onboard/register">
+          <Button variant="outline">Register</Button>
+        </Link>
       )}
     </ul>
   );
 
   const logged = (
-    <ul className="grid gap-3 p-6 md:w-[300px] lg:w-[400px] lg:grid-cols-[1fr_1fr]">
+    <ul className="grid gap-2 p-1 md:w-[300px] lg:w-[400px] justify-items-center lg:grid-cols-[1fr_1fr]">
       <li className="row-span-3">
         <NavigationMenuLink asChild>
           <Link
@@ -82,7 +87,7 @@ export default function Navbar() {
       <Link href={"/draft"}>
         <button
           type="button"
-          className="rounded-full w-full flex items-center bg-blue-600 hover:bg-blue-500 text-white border-transparent focus:dark:bg-blue-600 focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 disabled:bg-blue-200 disabled:cursor-not-allowed disabled:dark:bg-blue-900 disabled:dark:text-slate-400 text-sm py-3 px-6 gap-2"
+          className="rounded w-full flex items-center bg-blue-600 hover:bg-blue-500 text-white border-transparent focus:dark:bg-blue-600 focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 disabled:bg-blue-200 disabled:cursor-not-allowed disabled:dark:bg-blue-900 disabled:dark:text-slate-400 text-sm py-3 px-6 gap-2"
         >
           <svg fill="none" viewBox="0 0 20 20" width="20" height="20">
             <path
@@ -93,7 +98,7 @@ export default function Navbar() {
               strokeWidth="1.25"
             ></path>
           </svg>
-          <span>Join the community</span>
+          <span>Draft Blog</span>
         </button>
       </Link>
       <Button
@@ -108,46 +113,60 @@ export default function Navbar() {
   );
 
   return (
-    <Drawer>
-      <nav className="z-10 fixed flex bg-black/10 backdrop-blur items-center top-0 left-0 w-full border-b-gray-200 border-b py-4 px-6 justify-between">
-        <div className="flex items-center">
-          <TbHexagonLetterB className="text-black dark:text-white text-4xl" />
+    <nav className="z-10 fixed flex bg-black/10 backdrop-blur items-center top-0 left-0 w-full border-b-gray-200 border-b py-4 px-6 justify-between">
+      <div className="flex items-center">
+        <TbHexagonLetterB className="text-black dark:text-white text-4xl" />
 
-          <div className="font-bold text-black dark:text-white text-xl">
-            logPenn
-          </div>
+        <div className="font-bold text-black dark:text-white text-xl">
+          logPenn
         </div>
+      </div>
 
-        <div className="md:flex hidden items-center gap-5">
-          {!loggedIn && <NavigationMenuDemo>{notLogged}</NavigationMenuDemo>}
-          <IoSearchOutline className="text-xl" />
-          <ModeToggle />
+      <div className="md:flex hidden items-center gap-5">
+        {!loggedIn && <NavigationMenuDemo>{notLogged}</NavigationMenuDemo>}
+        <IoSearchOutline className="text-xl" />
+        <ModeToggle />
 
-          {loggedIn && (
-            <>
-              <NavigationMenuDemo>{logged}</NavigationMenuDemo>{" "}
-              <IoIosNotificationsOutline className="text-2xl" />
-              <Link href="/profile">
-                <div className="rounded-full h-10 border border-black aspect-square bg-[url('https://storage.googleapis.com/opensea-static/opensea-profile/10.png')] "></div>
-              </Link>
-            </>
-          )}
-        </div>
-        <div className="flex md:hidden">
-          <Button variant="outline">
-            <GiHamburgerMenu className="text-xl" />
-          </Button>
-        </div>
-      </nav>
-      <DrawerContent>
-        <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader>
-            <DrawerTitle>Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-          </DrawerHeader>
-        </div>
-      </DrawerContent>
-    </Drawer>
+        {loggedIn && (
+          <>
+            <NavigationMenuDemo>{logged}</NavigationMenuDemo>{" "}
+            <IoIosNotificationsOutline className="text-2xl" />
+            {/* <Link href="/profile">
+              <div className="rounded-full h-10 border border-black aspect-square bg-[url('https://storage.googleapis.com/opensea-static/opensea-profile/10.png')] "></div>
+            </Link> */}
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button
+                  className="rounded-full h-10 border border-black aspect-square bg-[url('https://storage.googleapis.com/opensea-static/opensea-profile/10.png')] "
+                  variant="link"
+                ></Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80">
+                <div className="flex justify-between space-x-4">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-semibold">{Decoded?.email}</h4>
+                    <p className="text-sm">
+                      The React Framework – created and maintained by @vercel.
+                    </p>
+                    <div className="flex items-center pt-2">
+                      <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+                      <span className="text-xs text-muted-foreground">
+                        Joined December 2021
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </>
+        )}
+      </div>
+      <div className="flex md:hidden">
+        <Button variant="outline">
+          <GiHamburgerMenu className="text-xl" />
+        </Button>
+      </div>
+    </nav>
   );
 }
 
