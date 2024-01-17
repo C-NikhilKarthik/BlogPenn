@@ -1,6 +1,4 @@
 import { Column, Entity, BeforeInsert } from "typeorm";
-import bcrypt from 'bcryptjs';
-
 
 @Entity()
 export class UserRegistrationDto{
