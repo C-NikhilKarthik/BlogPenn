@@ -1,6 +1,6 @@
 import express from "express";
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+import { DataSource, UsingJoinColumnOnlyOnOneSideAllowedError } from "typeorm";
 import { AuthService } from "./authentication/auth.service";
 import { UserRegistrationDto } from "./authentication/auth.dto";
 import cors from "cors";
@@ -36,7 +36,6 @@ async function connectDB() {
     .catch((e) => console.log(e));
 }
 
-
 //authentication
 app.post("/auth/signup", async (req, res) => {
   try {
@@ -60,33 +59,39 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
-
-//Blogs
-app.post("/blog/create", async (req,res)=>{
-  try{
-    const blogData: BlogCreateDto = req.body;
-    const data = await CreateBlog.createBlog(blogData);
-    res.json(data);
-
-  }catch(error)
-  {
-    console.log(error);
-    res.status(500).json({error : "Internal Server Error"})
+app.post("/getUser", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const newUSer = await AuthService.getUser(email);
+    res.json(newUSer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.get("/blog/allBlog:userId", async (req,res)=>{
-  try{
+//Blogs
+app.post("/blog/create", async (req, res) => {
+  try {
+    const blogData: BlogCreateDto = req.body;
+    const data = await CreateBlog.createBlog(blogData);
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/blog/allBlog:userId", async (req, res) => {
+  try {
     const id = req.params.userId;
     const data = await CreateBlog.getBlog(id);
     res.json(data);
-
-  }catch(error)
-  {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error : "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
 
 app.listen(PORT, async () => {
   await connectDB();

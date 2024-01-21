@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Repository, SimpleConsoleLogger } from "typeorm";
 import { UserRegistrationDto } from "./auth.dto";
 import { Users } from "../entities/User.entity";
 import { AppSataSource } from "..";
@@ -73,5 +73,16 @@ export class AuthService {
         },
       };
     }
+  }
+
+  static async getUser(email: string): Promise<any> {
+    const myDataSource = AppSataSource;
+    const user = await myDataSource
+      .getRepository(Users)
+      .findOne({ where: { email: email } });
+
+    console.log(user);
+
+    return user;
   }
 }

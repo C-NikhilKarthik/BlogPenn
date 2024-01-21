@@ -27,11 +27,15 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const loggedIn = useSelector(
     (state: RootState) => state.authReducer.user.loggedIn
   );
+
+  const router = useRouter();
 
   const token = useSelector((state: RootState) => state.authReducer.user.token);
 
@@ -39,6 +43,46 @@ export default function Navbar() {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const getUserDetails = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/getUser",
+        { email: Decoded?.email },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // accept: "application/json",
+          },
+        }
+      );
+
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  getUserDetails();
+  const createBlog = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5050/blog/create",
+        { userid: Decoded?.id },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // accept: "application/json",
+          },
+        }
+      );
+
+      const id = response.data.blogid; // Assuming the response contains an 'id'
+
+      router.push(`/draft/${id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const notLogged = (
     <ul className="grid gap-3 p-6 md:w-[300px] lg:w-[400px] lg:grid-cols-[1fr_1fr]">
       <li className="row-span-3">
@@ -85,23 +129,24 @@ export default function Navbar() {
         </NavigationMenuLink>
       </li>
       <div className="w-full flex flex-col items-center h-full p-1 gap-2 justify-center">
-        <Link className="w-full" href={"/draft"}>
-          <button
-            type="button"
-            className="rounded justify-center w-full flex items-center bg-blue-600 hover:bg-blue-500 text-white border-transparent focus:dark:bg-blue-600 focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 disabled:bg-blue-200 disabled:cursor-not-allowed disabled:dark:bg-blue-900 disabled:dark:text-slate-400 text-sm py-3 px-6 gap-2"
-          >
-            <svg fill="none" viewBox="0 0 20 20" width="20" height="20">
-              <path
-                stroke="currentColor"
-                d="M12.77 3.897 7.587 9.078c-.344.344-.515.516-.659.708-.128.17-.238.353-.331.545-.105.216-.178.448-.324.911l-.763 2.413 2.413-.762c.463-.147.695-.22.911-.324.192-.093.375-.204.545-.332.193-.143.364-.315.708-.659l5.181-5.18m-2.5-2.5.981-.981c.34-.341.511-.512.695-.603a1.25 1.25 0 0 1 1.11 0c.184.091.354.262.695.603.34.34.511.51.602.695.174.35.174.76 0 1.11-.09.183-.261.354-.602.694l-.98.981m-2.5-2.5 2.5 2.5M16.666 17.5H3.333"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.25"
-              ></path>
-            </svg>
-            <span>Draft Blog</span>
-          </button>
-        </Link>
+        {/* <Link className="w-full" href={"/draft"}> */}
+        <button
+          type="button"
+          onClick={() => createBlog()}
+          className="rounded justify-center w-full flex items-center bg-blue-600 hover:bg-blue-500 text-white border-transparent focus:dark:bg-blue-600 focus:ring focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-600 disabled:bg-blue-200 disabled:cursor-not-allowed disabled:dark:bg-blue-900 disabled:dark:text-slate-400 text-sm py-3 px-6 gap-2"
+        >
+          <svg fill="none" viewBox="0 0 20 20" width="20" height="20">
+            <path
+              stroke="currentColor"
+              d="M12.77 3.897 7.587 9.078c-.344.344-.515.516-.659.708-.128.17-.238.353-.331.545-.105.216-.178.448-.324.911l-.763 2.413 2.413-.762c.463-.147.695-.22.911-.324.192-.093.375-.204.545-.332.193-.143.364-.315.708-.659l5.181-5.18m-2.5-2.5.981-.981c.34-.341.511-.512.695-.603a1.25 1.25 0 0 1 1.11 0c.184.091.354.262.695.603.34.34.511.51.602.695.174.35.174.76 0 1.11-.09.183-.261.354-.602.694l-.98.981m-2.5-2.5 2.5 2.5M16.666 17.5H3.333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.25"
+            ></path>
+          </svg>
+          <span>Draft Blog</span>
+        </button>
+        {/* </Link> */}
         <Button
           className="w-full"
           onClick={() => {

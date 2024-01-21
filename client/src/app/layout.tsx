@@ -56,6 +56,9 @@ export default function RootLayout({
   }, []);
   return (
     <html lang="en">
+      <head>
+        <title>BlogPenn</title>
+      </head>
       <body className={inter.className}>
         <ReduxProvider>
           <ThemeProvider
