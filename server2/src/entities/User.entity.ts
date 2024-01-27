@@ -18,6 +18,9 @@ export class Users {
   id: string;
 
   @Column()
+  username: string;
+
+  @Column()
   email: string;
 
   @Column()
