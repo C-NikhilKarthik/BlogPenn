@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Users } from "./User.entity";
 import { Comments } from "./Comments.entity";
 
@@ -8,10 +8,19 @@ export class Blogs{
     blogid:string;
 
     @Column()
-    heading:string;
+    heading?:string;
     
     @Column()
-    content:string;
+    content?:string;
+
+    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    createdon: Date;
+
+    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    updatedon: Date;
+
+    @Column()
+    draft: boolean;
 
     @OneToMany(()=>Comments,(comment)=>comment.commentid)
     comments:Comments[];
