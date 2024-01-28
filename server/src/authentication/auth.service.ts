@@ -1,9 +1,10 @@
-import { Repository, SimpleConsoleLogger } from "typeorm";
+import { Repository } from "typeorm";
 import { UserRegistrationDto } from "./auth.dto";
 import { Users } from "../entities/User.entity";
 import { AppSataSource } from "..";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import UserLoginDto from "./auth.login.dto";
 // const config = require("../config/env");
 
 // const JWT_SECRET = process.env.JWT_SECRET!;
@@ -19,7 +20,7 @@ export class AuthService {
     return await userRepository.save(user);
   }
 
-  static async signIn(body: UserRegistrationDto): Promise<any> {
+  static async signIn(body: UserLoginDto): Promise<any> {
     const myDataSource = AppSataSource;
     let User;
     try {
@@ -73,16 +74,5 @@ export class AuthService {
         },
       };
     }
-  }
-
-  static async getUser(email: string): Promise<any> {
-    const myDataSource = AppSataSource;
-    const user = await myDataSource
-      .getRepository(Users)
-      .findOne({ where: { email: email } });
-
-    console.log(user);
-
-    return user;
   }
 }

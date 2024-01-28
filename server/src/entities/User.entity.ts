@@ -12,10 +12,13 @@ import { Blogs } from "./Blogs.entity";
 import bcrypt from "bcryptjs";
 
 @Entity()
-@Unique(["email"])
+@Unique(["email","username"])
 export class Users {
   @PrimaryGeneratedColumn("uuid")
   id: string;
+
+  @Column()
+  username: string;
 
   @Column()
   email: string;
@@ -40,7 +43,6 @@ export class Users {
 
   @BeforeInsert()
   async hashPassword(): Promise<void> {
-    console.log("hiii");
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
   }
