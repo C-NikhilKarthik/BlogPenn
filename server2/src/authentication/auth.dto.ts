@@ -6,6 +6,9 @@ export class UserRegistrationDto{
     email:string;
 
     @Column()
+    username: string;
+
+    @Column()
     firstname:string;
 
     @Column()

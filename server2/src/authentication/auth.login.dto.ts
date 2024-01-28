@@ -1,11 +1,10 @@
 import { Column, Entity } from "typeorm";
 
 @Entity()
-export class BlogCreateDto{
+export default class UserLoginDto{
+    @Column()
+    email:string;
 
     @Column()
-    heading: string;
-    
-    @Column()
-    content:string;
+    password:string;
 }

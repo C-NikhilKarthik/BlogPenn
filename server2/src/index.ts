@@ -62,10 +62,10 @@ app.post("/auth/login", async (req, res) => {
 
 
 //Blogs
-app.post("/blog/create", async (req,res)=>{
+app.post("/blog/createEmpty", async (req,res)=>{
   try{
-    const blogData: BlogCreateDto = req.body;
-    const data = await CreateBlog.createBlog(blogData);
+    const id = "6bceef3c-f4af-43b9-88f8-194ca5939395"; //pass user id by taking from cookies
+    const data = await CreateBlog.createEmptyBlog(id);
     res.json(data);
 
   }catch(error)
@@ -74,6 +74,32 @@ app.post("/blog/create", async (req,res)=>{
     res.status(500).json({error : "Internal Server Error"})
   }
 });
+
+app.post("/blog/updateBlog:blogId", async (req,res)=>{
+  try{
+    const blogId = req.params.blogId;
+    const blogData: BlogCreateDto = req.body;
+    const data = await CreateBlog.updateBlog(blogId,blogData)
+    res.json(data);
+
+  }catch(error){
+    console.log(error);
+    res.status(500).json({error: "Internal Server Error"})
+  }
+})
+
+app.get("/blog/getDraftedBlog", async (req,res)=>{
+  try{
+    const id = "6bceef3c-f4af-43b9-88f8-194ca5939395"; //pass user id by taking from cookies
+    const blogData: BlogCreateDto = req.body;
+    const data = await CreateBlog.getDraftedBlog(id)
+    res.json(data);
+
+  }catch(error){
+    console.log(error);
+    res.status(500).json({error: "Internal Server Error"})
+  }
+})
 
 app.get("/blog/allBlog:userId", async (req,res)=>{
   try{
