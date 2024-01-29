@@ -5,10 +5,15 @@ import { AppSataSource } from "..";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import UserLoginDto from "./auth.login.dto";
+import { Z_DEFAULT_COMPRESSION } from "zlib";
 // const config = require("../config/env");
 
 // const JWT_SECRET = process.env.JWT_SECRET!;
 // console.log(JWT_SECRET);
+interface JwtPayload {
+  email: string;
+  id: string;
+}
 
 export class AuthService {
   private static userRepository: Repository<Users>;
@@ -18,6 +23,48 @@ export class AuthService {
     const userRepository = myDataSource.getRepository(Users);
     const user = userRepository.create(body);
     return await userRepository.save(user);
+  }
+  static async checkToken(token: string): Promise<any> {
+    const myDataSource = AppSataSource;
+
+    try {
+      const decode = jwt.verify(token, "blogpenn_team") as JwtPayload;
+
+      if (decode) {
+        const user = await myDataSource
+          .getRepository(Users)
+          .findOne({ where: { email: decode?.email } });
+        if (user) {
+          return {
+            status: 200,
+            data: {
+              message: "Login",
+              decode,
+            },
+          };
+        }
+        return {
+          status: 402,
+          data: {
+            message: "No User found",
+          },
+        };
+      } else {
+        return {
+          status: 401,
+          data: {
+            message: "Token Expired",
+          },
+        };
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        data: {
+          message: "Error : " + error,
+        },
+      };
+    }
   }
 
   static async signIn(body: UserLoginDto): Promise<any> {
@@ -55,6 +102,8 @@ export class AuthService {
           status: 200,
           data: {
             message: "Login successful",
+            id: user.id,
+            email: user.email,
             token,
           },
         };

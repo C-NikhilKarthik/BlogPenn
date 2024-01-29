@@ -36,7 +36,6 @@ async function connectDB() {
     .catch((e) => console.log(e));
 }
 
-
 //authentication
 app.post("/auth/signup", async (req, res) => {
   try {
@@ -60,59 +59,74 @@ app.post("/auth/login", async (req, res) => {
   }
 });
 
-
 //Blogs
-app.post("/blog/createEmpty", async (req,res)=>{
-  try{
-    const id = "6bceef3c-f4af-43b9-88f8-194ca5939395"; //pass user id by taking from cookies
+app.post("/blog/createEmpty", async (req, res) => {
+  try {
+    const { id } = req.body;
+    // const id = "6bceef3c-f4af-43b9-88f8-194ca5939395"; //pass user id by taking from cookies
     const data = await CreateBlog.createEmptyBlog(id);
     res.json(data);
-
-  }catch(error)
-  {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error : "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-app.post("/blog/updateBlog:blogId", async (req,res)=>{
-  try{
+app.post("/blog/updateBlog/:blogId", async (req, res) => {
+  try {
     const blogId = req.params.blogId;
     const blogData: BlogCreateDto = req.body;
-    const data = await CreateBlog.updateBlog(blogId,blogData)
+    const data = await CreateBlog.updateBlog(blogId, blogData);
     res.json(data);
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
 
-app.get("/blog/getDraftedBlog", async (req,res)=>{
-  try{
-    const id = "6bceef3c-f4af-43b9-88f8-194ca5939395"; //pass user id by taking from cookies
-    const blogData: BlogCreateDto = req.body;
-    const data = await CreateBlog.getDraftedBlog(id)
+app.get("/blog/getDraftedBlog/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = await CreateBlog.getDraftedBlog(id);
     res.json(data);
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error: "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
 
-app.get("/blog/allBlog:userId", async (req,res)=>{
-  try{
-    const id = req.params.userId;
+app.post("/auth/checkToken", async (req, res) => {
+  try {
+    const { token } = req.body;
+    const data = await AuthService.checkToken(token);
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/blog/getOneBlog/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const data = await CreateBlog.getOneBlog(id);
+    res.json(data);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/blog/allBlog", async (req, res) => {
+  try {
+    const { id } = req.body;
     const data = await CreateBlog.getBlog(id);
     res.json(data);
-
-  }catch(error)
-  {
+  } catch (error) {
     console.log(error);
-    res.status(500).json({error : "Internal Server Error"})
+    res.status(500).json({ error: "Internal Server Error" });
   }
-})
+});
 
 app.listen(PORT, async () => {
   await connectDB();
