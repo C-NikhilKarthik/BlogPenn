@@ -10,8 +10,22 @@ import { AppGlobal } from "@/@types/global";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/hooks/redux/store";
+import {
+  updateLoading,
+  updateLoggedIn,
+  updateUser,
+} from "@/hooks/redux/features/auth-slice";
 
 export default function Home() {
+  const dispatch = useDispatch<AppDispatch>();
+  const User = useSelector((state: RootState) => state.authReducer.user);
+  const Loading = useSelector((state: RootState) => state.authReducer.loading);
+  const LoggedIn = useSelector(
+    (state: RootState) => state.authReducer.loggedIn
+  );
+
   const appGlobalValue = useContext(appContext);
   const { loggedIn, saveUser, loading, setLoggedIn, setLoading } =
     appGlobalValue as AppGlobal;
@@ -37,7 +51,16 @@ export default function Home() {
               email: response.data.data.decode.email,
               token: storedToken,
             });
+            dispatch(
+              updateUser({
+                id: response.data.data.decode.id,
+                email: response.data.data.decode.email,
+                token: storedToken,
+                userName: response.data.data.userName,
+              })
+            );
             setLoggedIn(true);
+            dispatch(updateLoggedIn(true));
           } else {
             toast({
               title: "Error",
@@ -54,6 +77,7 @@ export default function Home() {
       }
 
       setLoading(false);
+      dispatch(updateLoading(false));
     };
 
     fetchData();
@@ -61,12 +85,12 @@ export default function Home() {
 
   return (
     <div className="min-w-screen min-h-screen h-full w-full flex items-center justify-center">
-      {loading ? (
+      {Loading ? (
         <Icons.spinner className=" animate-spin" />
       ) : (
         <main className="flex pt-20 w-full min-h-screen h-full flex-col items-center justify-between">
           <Navbar />
-          {loggedIn ? (
+          {LoggedIn ? (
             <div className="w-full xl:px-20 xl:max-w-7xl max-w-3xl flex xl:flex xl:flex-row flex-col">
               <div className="w-full flex-1 flex flex-col">
                 <div className="w-full gap-3 flex">

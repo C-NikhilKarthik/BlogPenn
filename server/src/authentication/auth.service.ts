@@ -39,6 +39,7 @@ export class AuthService {
             status: 200,
             data: {
               message: "Login",
+              userName: user.username,
               decode,
             },
           };
@@ -104,6 +105,7 @@ export class AuthService {
             message: "Login successful",
             id: user.id,
             email: user.email,
+            userName: user.username,
             token,
           },
         };

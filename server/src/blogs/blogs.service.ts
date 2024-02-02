@@ -54,7 +54,6 @@ export class CreateBlog {
   }
 
   static async createEmptyBlog(id: string): Promise<any> {
-    console.log("hii");
     const myDataSource = AppSataSource;
     const blogRepository = myDataSource.getRepository(Blogs);
     const userRepository = myDataSource.getRepository(Users);

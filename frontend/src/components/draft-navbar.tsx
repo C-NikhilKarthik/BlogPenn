@@ -1,20 +1,25 @@
-import { useContext } from "react";
 import { TbHexagonLetterB } from "react-icons/tb";
 import { Button } from "./ui/button";
 import { GoSidebarCollapse } from "react-icons/go";
-import { appContext } from "@/hooks/context/appContext";
-import { AppGlobal } from "@/@types/global";
 import { Link } from "react-router-dom";
+import { AppDispatch, RootState } from "@/hooks/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { updateDraftDrawer } from "@/hooks/redux/features/auth-slice";
 
 export default function DraftNavbar() {
-  const appGlobalValue = useContext(appContext);
-  const { openDrawer, setOpenDrawer } = appGlobalValue as AppGlobal;
+  const dispatch = useDispatch<AppDispatch>();
+  const draftDrawer = useSelector(
+    (state: RootState) => state.authReducer.draftDrawer
+  );
 
   return (
     <div className="w-full absolute top-0 left-0 flex z-10 p-4 justify-between">
       <div className="flex gap-2 text-black dark:text-white">
-        {!openDrawer && (
-          <button className="" onClick={() => setOpenDrawer(true)}>
+        {!draftDrawer && (
+          <button
+            className=""
+            onClick={() => dispatch(updateDraftDrawer(true))}
+          >
             <GoSidebarCollapse className="text-xl" />
           </button>
         )}

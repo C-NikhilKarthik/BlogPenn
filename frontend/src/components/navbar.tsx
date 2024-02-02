@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import { CalendarDays } from "lucide-react";
 
@@ -10,15 +9,12 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { ModeToggle } from "./dark-mode";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { NavigationMenuDemo } from "./navigation";
-
 import { Icons } from "@/components/icons";
 import { NavigationMenuLink } from "@/components/ui/navigation-menu";
-
 import { Button } from "./ui/button";
 
-// import { logOut } from "@/lib/features/auth-slice";
-// import { AppDispatch, RootState } from "@/lib/store";
-// import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/hooks/redux/store";
 
 import {
   HoverCard,
@@ -26,19 +22,19 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import axios from "axios";
-import { appContext } from "@/hooks/context/appContext";
-import { AppGlobal } from "@/@types/global";
 import { Link, useNavigate } from "react-router-dom";
+import { updateLoggedIn } from "@/hooks/redux/features/auth-slice";
 
 export default function Navbar() {
-  const appGlobalValue = React.useContext(appContext);
-  const { user, loggedIn, setLoggedIn } = appGlobalValue as AppGlobal;
+  const dispatch = useDispatch<AppDispatch>();
+  const User = useSelector((state: RootState) => state.authReducer.user);
+  const LoggedIn = useSelector(
+    (state: RootState) => state.authReducer.loggedIn
+  );
 
   const navigate = useNavigate();
+  const userId = User.id;
 
-  const userId = user.id;
-
-  // const dispatch = useDispatch<AppDispatch>();
   const createBlog = async () => {
     try {
       const res = await axios.get(
@@ -56,7 +52,6 @@ export default function Navbar() {
         {
           headers: {
             "Content-Type": "application/json",
-            // accept: "application/json",
           },
         }
       );
@@ -88,7 +83,7 @@ export default function Navbar() {
       <ListItem href="/onboard" title="Login">
         Re-usable components built using Radix UI and Tailwind CSS.
       </ListItem>
-      {!loggedIn && (
+      {!LoggedIn && (
         <Link to="/onboard/register">
           <Button variant="outline">Register</Button>
         </Link>
@@ -114,7 +109,6 @@ export default function Navbar() {
         </NavigationMenuLink>
       </li>
       <div className="w-full flex flex-col items-center h-full p-1 gap-2 justify-center">
-        {/* <Link className="w-full" href={"/draft"}> */}
         <button
           type="button"
           onClick={() => createBlog()}
@@ -135,7 +129,8 @@ export default function Navbar() {
         <Button
           className="w-full"
           onClick={() => {
-            setLoggedIn(false);
+            // setLoggedIn(false);
+            dispatch(updateLoggedIn(false));
             localStorage.removeItem("user");
           }}
         >
@@ -156,17 +151,14 @@ export default function Navbar() {
       </div>
 
       <div className="md:flex hidden items-center gap-5">
-        {!loggedIn && <NavigationMenuDemo>{notLogged}</NavigationMenuDemo>}
+        {!LoggedIn && <NavigationMenuDemo>{notLogged}</NavigationMenuDemo>}
         <IoSearchOutline className="text-xl" />
-        <ModeToggle />
 
-        {loggedIn && (
+        {LoggedIn && (
           <>
             <NavigationMenuDemo>{logged}</NavigationMenuDemo>
+            <ModeToggle />
             <IoIosNotificationsOutline className="text-2xl" />
-            {/* <Link href="/profile">
-              <div className="rounded-full h-10 border border-black aspect-square bg-[url('https://storage.googleapis.com/opensea-static/opensea-profile/10.png')] "></div>
-            </Link> */}
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Button
@@ -176,9 +168,10 @@ export default function Navbar() {
               </HoverCardTrigger>
               <HoverCardContent className="w-80">
                 <div className="flex justify-between space-x-4">
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-semibold">{user.email}</h4>
-                    <p className="text-sm">
+                  <div className="flex flex-col">
+                    <h4 className="text-sm font-bold">{User.userName}</h4>
+                    <h4 className="text-xs text-slate-300">{User.email}</h4>
+                    <p className="text-sm mt-3">
                       The React Framework – created and maintained by @vercel.
                     </p>
                     <div className="flex items-center pt-2">

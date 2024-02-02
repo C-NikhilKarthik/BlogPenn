@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import axios, { AxiosError } from "axios";
 import { TbHexagonLetterB } from "react-icons/tb";
@@ -11,13 +11,13 @@ import {
   FaLinkedin,
   FaFacebook,
 } from "react-icons/fa6";
-import { appContext } from "@/hooks/context/appContext";
-import { AppGlobal } from "@/@types/global";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/hooks/redux/store";
+import { updateLoggedIn, updateUser } from "@/hooks/redux/features/auth-slice";
 
 export default function Login() {
-  const appGlobalValue = useContext(appContext);
-  const { saveUser, setLoggedIn } = appGlobalValue as AppGlobal;
+  const dispatch = useDispatch<AppDispatch>();
 
   const { toast } = useToast();
   const [part, setPart] = useState(0);
@@ -32,7 +32,7 @@ export default function Login() {
     formData.append(field, value);
   };
 
-  const onSubmit = async (e: any) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -48,13 +48,15 @@ export default function Login() {
 
       if (response.data.status === 200) {
         const token = response.data.data.token;
-        saveUser({
-          id: response.data.data.id,
-          email: response.data.data.email,
-          token: token,
-        });
+        dispatch(
+          updateUser({
+            id: response.data.data.id,
+            email: response.data.data.email,
+            token: token,
+          })
+        );
         localStorage.setItem("user", response.data.data.token);
-        setLoggedIn(true);
+        dispatch(updateLoggedIn(true));
         navigate("/");
 
         toast({

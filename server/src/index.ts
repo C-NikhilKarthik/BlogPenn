@@ -15,7 +15,7 @@ app.use(cors());
 
 export const AppSataSource = new DataSource({
   type: "postgres",
-  host: "h2s-database.c7wuok60klur.us-east-1.rds.amazonaws.com",
+  host: "blogpenn.c7wuok60klur.us-east-1.rds.amazonaws.com",
   port: 5432,
   username: "postgres",
   password: "anand2002",
