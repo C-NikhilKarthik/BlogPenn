@@ -9,5 +9,4 @@ const BLOG = {
   getOneBlog: "/blog/getOneBlog",
   update: "/blog/updateBlog",
 };
-
 export { AUTH, BLOG };
