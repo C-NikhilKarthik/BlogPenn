@@ -1,12 +1,12 @@
 import DraftNavbar from "@/components/draft-navbar";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoSidebarExpand } from "react-icons/go";
-import { MdFormatListBulletedAdd, MdAddCard } from "react-icons/md";
+import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoSearchSharp } from "react-icons/io5";
 import { RiSave3Fill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { FaRegImages } from "react-icons/fa6";
-
+// import { BLOG } from "@/api/routes";
 import {
   Accordion,
   AccordionContent,
@@ -15,10 +15,16 @@ import {
 } from "@/components/ui/accordion";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-import { appContext } from "@/hooks/context/appContext";
-import { AppGlobal } from "@/@types/global";
 import { useParams } from "react-router-dom";
 import { Blog } from "@/@types/blogs";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/hooks/redux/store";
+import {
+  updateDraftDrawer,
+  updateLoading,
+  updateLoggedIn,
+  updateUser,
+} from "@/hooks/redux/features/auth-slice";
 
 interface Data {
   heading: string;
@@ -29,10 +35,12 @@ interface BlogDetails {
   drafts: Blog[];
 }
 export default function Draft() {
-  const appGlobalValue = useContext(appContext);
-  const { openDrawer, saveUser, setLoggedIn, setLoading, setOpenDrawer } =
-    appGlobalValue as AppGlobal;
+  const dispatch = useDispatch<AppDispatch>();
+  const draftDrawer = useSelector(
+    (state: RootState) => state.authReducer.draftDrawer
+  );
 
+  console.log(import.meta.env.VITE_SERVER_URL);
   const params = useParams();
   const [userId, setUserId] = useState<string>("");
   const [blogDetails, setBlogDetails] = useState<BlogDetails>({
@@ -55,7 +63,6 @@ export default function Draft() {
           response.data.data.message !== null
         ) {
           const id = response?.data?.data?.message;
-          console.log(id);
           setBlogDetails({ drafts: id });
         }
       } else {
@@ -122,6 +129,7 @@ export default function Draft() {
 
     try {
       const response = await axios.post(
+        // `http://localhost:5050/${BLOG.update}/${params.id}`,
         `http://localhost:5050/blog/updateBlog/${params.id}`,
         data,
         {
@@ -168,14 +176,22 @@ export default function Draft() {
           );
 
           if (response.data.status === 200) {
-            saveUser({
-              id: response.data.data.decode.id,
-              email: response.data.data.decode.email,
-              token: storedToken,
-            });
+            // saveUser({
+            //   id: response.data.data.decode.id,
+            //   email: response.data.data.decode.email,
+            //   token: storedToken,
+            // });
+            dispatch(
+              updateUser({
+                id: response.data.data.decode.id,
+                email: response.data.data.decode.email,
+                userName: response.data.data.userName,
+                token: storedToken,
+              })
+            );
 
             setUserId(response.data.data.decode.id);
-            setLoggedIn(true);
+            dispatch(updateLoggedIn(true));
           } else {
             toast({
               title: "Error",
@@ -191,7 +207,7 @@ export default function Draft() {
         }
       }
 
-      setLoading(false);
+      dispatch(updateLoading(false));
     };
 
     fetchData();
@@ -203,14 +219,17 @@ export default function Draft() {
     <div className="w-full min-h-screen flex h-full relative ">
       <div
         className={`${
-          !openDrawer
+          !draftDrawer
             ? "w-0 invisible opacity-0"
             : "opacity-100 visible w-[17rem]"
         } p-4 flex-none gap-2 transition-[width,opacity] duration-500 border-r borer-r-slate-600 h-screen flex flex-col`}
       >
         <div className="p-4 w-full text-black dark:text-white flex justify-between">
           <div></div>
-          <button className="" onClick={() => setOpenDrawer(false)}>
+          <button
+            className=""
+            onClick={() => dispatch(updateDraftDrawer(false))}
+          >
             <GoSidebarExpand className="text-xl" />
           </button>
         </div>

@@ -6,21 +6,24 @@ import { Toaster } from "@/components/ui/toaster";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import Draft from "@/pages/Draft";
+import { ReduxProvider } from "@/hooks/redux/provider";
 
 export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <AppContextProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/onboard" element={<Login />} />
-            <Route path="/onboard/register" element={<Register />} />
-            <Route path="/draft/:id" element={<Draft />} />
-          </Routes>
-        </Router>
-        <Toaster />
-      </AppContextProvider>
+      <ReduxProvider>
+        <AppContextProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/onboard" element={<Login />} />
+              <Route path="/onboard/register" element={<Register />} />
+              <Route path="/draft/:id" element={<Draft />} />
+            </Routes>
+          </Router>
+          <Toaster />
+        </AppContextProvider>
+      </ReduxProvider>
     </ThemeProvider>
   );
 }

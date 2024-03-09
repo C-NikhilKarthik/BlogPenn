@@ -26,3 +26,13 @@ export interface Decoded {
   id: string;
   email: string;
 }
+
+export interface Error {
+  err: {
+    response: {
+      data: {
+        message: string;
+      };
+    };
+  };
+}
