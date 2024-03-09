@@ -20,7 +20,13 @@ export class Blogs{
     updatedon: Date;
 
     @Column()
+    interest?:string;
+
+    @Column()
     draft: boolean;
+
+    @OneToMany(()=>Users,(user)=>user.likes)
+    likes?:Users[]
 
     @OneToMany(()=>Comments,(comment)=>comment.commentid)
     comments:Comments[];
